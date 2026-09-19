@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Horse Racing – Drinking Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ SCREEN 1: LEGG TIL SPILLERE ============ -->
+<section id="screen-players" class="screen active">
+  <div class="table-frame">
+    <span class="corner-suit corner-tl">&#9824;</span>
+    <span class="corner-suit corner-tr">&#9829;</span>
+    <span class="corner-suit corner-bl">&#9827;</span>
+    <span class="corner-suit corner-br">&#9830;</span>
+
+    <div class="screen-header">
+      <div class="header-rule"></div>
+      <span class="horseshoe">&#128137;</span>
+      <div class="header-rule"></div>
+    </div>
+    <h1 class="title">LEGG TIL SPILLERE</h1>
+
+    <div class="players-columns">
+      <span class="col-label col-name">SPILLERE</span>
+      <span class="col-label col-suit">TYPE KORT <span class="chev">&#9662;</span></span>
+      <span class="col-label col-sips">ANTALL SLURKER</span>
+    </div>
+
+    <div id="players-list" class="players-list"></div>
+
+    <button id="add-player-btn" class="add-player-btn">
+      <span class="add-circle">+</span>
+      <span class="add-label">LEGG TIL SPILLER</span>
+    </button>
+
+    <button id="go-to-game-btn" class="btn-gold btn-go-game">
+      <span class="flag">&#127937;</span> GÅ TIL SPILL
+    </button>
+  </div>
+</section>
+
+<!-- ============ SCREEN 2: HORSE RACING ============ -->
+<section id="screen-race" class="screen">
+  <div class="table-frame race-frame">
+
+    <div class="race-top">
+      <div class="player-count-box">
+        <div class="player-count-label">&#128101; ANTALL SPILLERE</div>
+        <div id="player-count-value" class="player-count-value">4 <span class="chev">&#9662;</span></div>
+      </div>
+
+      <div class="race-title-block">
+        <div class="header-rule small"></div>
+        <h1 class="title race-title">HORSE RACING</h1>
+        <div class="subtitle">&#10022; DRINKING GAME &#10022;</div>
+      </div>
+
+      <div class="draw-pile-box">
+        <div id="draw-pile" class="draw-pile">
+          <div class="card card-back"></div>
+        </div>
+        <div class="draw-pile-text">
+          <strong>TREKKES FRA BUNKEN</strong>
+          Neste kort bestemmer<br>hvilken hest som<br>flyttes 1 steg frem.
+        </div>
+      </div>
+    </div>
+
+    <div class="track-cards-row" id="track-cards-row">
+      <!-- 7 track cards injected by JS -->
+    </div>
+
+    <div class="race-board">
+      <div class="horses-column" id="horses-column">
+        <!-- 4 horse cards injected by JS -->
+      </div>
+      <div class="lanes" id="lanes">
+        <!-- 4 lanes injected by JS -->
+      </div>
+    </div>
+
+    <button id="start-race-btn" class="btn-gold btn-start-race">
+      <span class="flag">&#127937;</span> START SPILL
+    </button>
+  </div>
+
+  <audio id="raceMusic" src="audio\Racing - William Tell Overture.mp3"></audio>
+</section>
+
+<!-- ============ SCREEN 3: VINNER(E)! ============ -->
+<section id="screen-winner" class="screen">
+  <div class="table-frame winner-frame">
+    <div class="screen-header">
+      <span class="horseshoe">&#128137;</span>
+    </div>
+    <h1 class="title">VINNER(E)!</h1>
+    <div class="header-rule small center-rule"></div>
+
+    <div id="winners-list" class="winners-list"></div>
+
+    <div class="winner-buttons">
+      <button id="restart-btn" class="btn-gold btn-restart">&#8635; START PÅ NYTT</button>
+      <button id="replay-btn" class="btn-gold btn-replay">&#128101; SPILL MED SAMME</button>
+    </div>
+  </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
