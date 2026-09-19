@@ -125,29 +125,31 @@ function debugCheckDeck() {
 }
 
 // ===================== PLAYERS SCREEN =====================
-function createPlayerRow(index) {
+function createPlayerRow(index, player = null) {
   const row = document.createElement("div");
   row.className = "player-row";
   row.dataset.id = nextPlayerId++;
 
-  const defaultSuit = SUITS[index % 4];
+  const defaultSuit = player?.suit ?? SUITS[index % 4];
 
   row.innerHTML = `
     <div class="player-index">${index + 1}</div>
     <div class="player-name-field">
       <span class="horse-icon">\u{1F40E}</span>
-      <input type="text" class="player-name-input" placeholder="Navn p\u00e5 spiller...">
+      <input type="text" class="player-name-input" placeholder="Navn p\u00e5 spiller..." aria-label="Navn p\u00e5 spiller ${index + 1}">
     </div>
-    <select class="suit-select suit-${defaultSuit}">
+    <select class="suit-select suit-${defaultSuit}" aria-label="Type kort for spiller ${index + 1}">
       ${SUITS.map((s) => `<option value="${s}" ${s === defaultSuit ? "selected" : ""}>${SUIT_SYMBOL[s]}</option>`).join("")}
     </select>
     <div class="sip-control">
-      <button type="button" class="sip-btn sip-minus">\u2212</button>
-      <span class="sip-value">1</span>
-      <button type="button" class="sip-btn sip-plus">+</button>
-      <button type="button" class="remove-player-btn">\u00d7</button>
+      <button type="button" class="sip-btn sip-minus" aria-label="F\u00e6rre slurker">\u2212</button>
+      <span class="sip-value">${player?.sips ?? 1}</span>
+      <button type="button" class="sip-btn sip-plus" aria-label="Flere slurker">+</button>
+      <button type="button" class="remove-player-btn" aria-label="Fjern spiller">\u00d7</button>
     </div>
   `;
+
+  if (player) row.querySelector(".player-name-input").value = player.name;
 
   const suitSelect = row.querySelector(".suit-select");
   suitSelect.addEventListener("change", () => {
@@ -171,9 +173,9 @@ function createPlayerRow(index) {
   return row;
 }
 
-function addPlayer() {
+function addPlayer(player = null) {
   const index = playersListEl.children.length;
-  const row = createPlayerRow(index);
+  const row = createPlayerRow(index, player);
   playersListEl.appendChild(row);
 }
 
@@ -185,17 +187,18 @@ function removePlayer(rowEl) {
 function renumberPlayerRows() {
   [...playersListEl.children].forEach((row, i) => {
     row.querySelector(".player-index").textContent = i + 1;
+    row.querySelector(".player-name-input").setAttribute("aria-label", `Navn p\u00e5 spiller ${i + 1}`);
+    row.querySelector(".suit-select").setAttribute("aria-label", `Type kort for spiller ${i + 1}`);
   });
 }
 
-function renderPlayers() {
+function renderPlayers(players = []) {
   playersListEl.innerHTML = "";
-  for (let i = 0; i < 4; i++) {
-    addPlayer();
-  }
+  if (players.length === 0) addPlayer();
+  else players.forEach((player) => addPlayer(player));
 }
 
-function savePlayers() {
+function readPlayers() {
   const rows = [...playersListEl.children];
   const players = [];
 
@@ -206,12 +209,11 @@ function savePlayers() {
     players.push({ name, suit, sips });
   }
 
-  gameState.players = players;
   return players;
 }
 
 function goToGame() {
-  const players = savePlayers();
+  const players = readPlayers();
 
   if (players.length === 0) {
     alert("Legg til minst \u00e9n spiller.");
@@ -230,6 +232,7 @@ function goToGame() {
     return;
   }
 
+  gameState.players = players;
   playerCountValueEl.innerHTML = `${players.length} <span class="chev">\u25be</span>`;
   setupRace();
   showScreen("race");
@@ -432,10 +435,13 @@ function showWinnerScreen() {
     winners.forEach((p) => {
       const row = document.createElement("div");
       row.className = "winner-row";
-      row.innerHTML = `
-        <span class="winner-name">\u{1F464} ${p.name.toUpperCase()}</span>
-        <span class="winner-sips">${p.sips}</span>
-      `;
+      const name = document.createElement("span");
+      name.className = "winner-name";
+      name.textContent = `\u{1F464} ${p.name.toUpperCase()}`;
+      const sips = document.createElement("span");
+      sips.className = "winner-sips";
+      sips.textContent = p.sips;
+      row.append(name, sips);
       winnersListEl.appendChild(row);
     });
   }
@@ -445,8 +451,9 @@ function showWinnerScreen() {
 
 // ===================== RESTART / REPLAY =====================
 function playAgainSamePlayers() {
-  setupRace();
-  showScreen("race");
+  // Keep the names and last bets editable before starting the next race.
+  renderPlayers(gameState.players);
+  showScreen("players");
 }
 
 function restartGame() {
@@ -457,7 +464,7 @@ function restartGame() {
 }
 
 // ===================== EVENT LISTENERS =====================
-addPlayerBtn.addEventListener("click", addPlayer);
+addPlayerBtn.addEventListener("click", () => addPlayer());
 goToGameBtn.addEventListener("click", goToGame);
 startRaceBtn.addEventListener("click", startRace);
 restartBtn.addEventListener("click", restartGame);
